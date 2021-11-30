@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Modeling Eviction Relief Funding</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="bootstrap/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="bootstrap/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="bootstrap/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Modeling Eviction Relief Funding</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">Our Goal</a></li>
+              <li><a href="#data">Data</a></li>
+              <li><a href="#modeling">Modeling</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h2>BERKELEY MIDS CAPSTONE</h2>
+        <h1>Modeling Eviction Relief</h1>
+      </div>
+
+      <!-- Example row of columns -->
+      <div class="row" id="about">
+        <div class="span12">
+          <h2>Our Goal</h2>
+           <p>Our goal is to create a model that uses the demographic and economic data at the census tract level in order to predict eviction rates within that census tract. This model can be used by housing advocates, drivers and designers of public policy, and emergency housing and shelter organizations to understand where need might be most acute and how much might be needed in order to forestall the predicted evictions for a given census tract. Our analysis relies on the records of eviction cases filed in civil courts across the United States, as well as data on eviction moratoria at the state, county, and municipal levels. Our project goal is to model and predict the number of eviction counts in Houston, Texas and Dallas, Texas by census tract.
+
+           Using the model would require that a user provide the demographic data and historical eviction data for a census tract in order to generate a forecast. Our forecasts provide estimates with an average accuracy of 0.38 evictions for an eight week forecast. This means that if the model is provided the correct data, it should be able to predict the number of evictions that will occur in two months time in a given census tract to within 0.5 evictions.
+           </p>
+        </div>
+      </div>
+
+      <!-- Example row of columns -->
+      <div class="row" id="data">
+        <div class="span12">
+          <h2>Our Data</h2>
+           <p>For demographic data, we used the US Census Bureau’s American Community Survey. As of Fall 2021 neither the ACS 1-year nor 5-year estimates were available for 2020 or 2021, so we’re making use of data from 2010 to the end of 2019 in order to build our model. We believe that adding in collected data from 2020 paired with the associated demographic and economic data would lead to the same forecasting power.
+           </p>
+        </div>
+      </div>
+
+      <!-- Example row of columns -->
+      <div class="row" id="modeling">
+        <div class="span12">
+          <h2>Modeling Process</h2>
+           <p>Our model is an ensemble approach which uses four underlying predictor models to generate forecasts for eviction rates and then an ensembling model to select which forecasting model should be selected to provide the forecast. Certain models do better with certain sorts of data than others so an ensemble approach made the most sense in order to use the strengths of each models while not being constrained by their weaknesses.
+           </p>
+
+           <p>The training data is used to train each forecasting model. The forecasting results and the information about each tract is then passed to an ensembling model which learns which models perform best for the different characteristics of each tract.
+           </p>
+
+           <img width="100%" src="ensembling-img.png"/>
+
+           <p>In order to use the model, the historical evictions and demographics of the tract should be passed to the model, which would then be able to select the appropriate forecasting model and create the forecast.
+           </p>
+           
+           <img width="100%" src="prediction-img.png"/>
+
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+        <p>&copy; Company 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="bootstrap/js/jquery.js"></script>
+    <script src="bootstrap/js/bootstrap-transition.js"></script>
+    <script src="bootstrap/js/bootstrap-alert.js"></script>
+    <script src="bootstrap/js/bootstrap-modal.js"></script>
+    <script src="bootstrap/js/bootstrap-dropdown.js"></script>
+    <script src="bootstrap/js/bootstrap-scrollspy.js"></script>
+    <script src="bootstrap/js/bootstrap-tab.js"></script>
+    <script src="bootstrap/js/bootstrap-tooltip.js"></script>
+    <script src="bootstrap/js/bootstrap-popover.js"></script>
+    <script src="bootstrap/js/bootstrap-button.js"></script>
+    <script src="bootstrap/js/bootstrap-collapse.js"></script>
+    <script src="bootstrap/js/bootstrap-carousel.js"></script>
+    <script src="bootstrap/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>

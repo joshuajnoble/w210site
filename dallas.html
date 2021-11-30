@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Eviction Forecast by Tract</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js"></script>
+<script src="papaparse.min.js"></script>
+<style>
+
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 50%; }
+
+#features {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 50%;
+	/*overflow: auto;*/
+	word-wrap: break-word;
+	background: rgba(255, 255, 255, 0.8);
+	font-family: sans-serif;
+	padding-left: 20px;
+}
+
+#features > span {
+	font-weight: 400;
+}
+
+#map canvas {
+	cursor: crosshair;
+}
+
+</style>
+</head>
+<body>
+	<div id="map"></div>
+	<div id="features">
+
+		<h3>Eviction Forecast For Tract</h3>
+
+		<p>Actual Evictions in October, 2019: <span id="end-evictions"></span></p>
+		<p>Forecast Evictions in December, 2019: <span id="forecast-evictions"></span></p>
+		<p>Actual Evictions December, 2019: <span id="actual-evictions"></span></p>
+
+		<h3>Tract Demographics</h3>
+
+		<p>Total Population: Black or African American Alone: <span id="SE_A03001_003"></span></p>
+		<p>Average Gross Rent for Renter-Occupied Housing Units: <span id="SE_A18005_001"></span></p>
+		<p>Households paying 30-50% of income in rent: <span id="SE_B18002_002"></span></p>
+		<p>Households paying 50% or more of income in rent: <span id="SE_B18002_003"></span></p>
+		<p>Residents who moved within the same county in the last year: <span id="SE_A08002B_003"></span></p>
+		<p>Households with no earnings reported in the last year: <span id="SE_A10011_003"></span></p>
+		<p>Household income of $20,000-$34,999 spending >30% of income on rent: <span id="SE_A10039B_009"></span></p>
+
+		<h3>Model Performance</h3>
+
+		<p>Best MASE Model: <span id="best-mase-model"></span></p>
+		<p>Best MASE <span id="best-mase"></span></p>
+		<p>Average MASE: <span id="average-mase"></span></p>
+		<p>Best RMSE: <span id="best-rmse"></span></p>
+		<p>Average RMSE: <span id="average-rmse"></span></p>
+
+	</div>
+	<script>
+
+
+		var parseResults = null;
+
+		Papa.parse("testing_data.csv", {
+			download: true,
+        	header: true,
+        	delimiter: ',',
+			complete: function(results) {
+				console.log(results);
+				parseResults = results;
+			}
+		});
+
+		mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zaHVham5vYmxlYmVya2VsZXkiLCJhIjoiY2t3a3htbGoyMDdmMzJ1dW56c2Vmb2hnayJ9.NozspSickipOVFVsBlcPBw';
+		const map = new mapboxgl.Map({
+			container: 'map', // container ID
+			style: 'mapbox://styles/joshuajnobleberkeley/ckwkxyp94010v14rxd9lk11jy', // style URL
+			center: [-96.79, 32.77], // starting position [lng, lat]
+			zoom: 12 // starting zoom
+		});
+
+
+		var models = {1:"NBEATS", 2:"LSTM", 3:"GRU", 4:"BRNN" };
+
+		map.on('mousemove', (event) => {
+			const features = map.queryRenderedFeatures(event.point);
+			 
+			// Limit the number of properties we're displaying for
+			// legibility and performance
+			const displayProperties = [
+				'type',
+				'properties',
+				'id',
+				'layer',
+				'source',
+				'sourceLayer',
+				'state'
+			];
+			 
+			const displayFeatures = features.map((feat) => {
+				const displayFeat = {};
+				displayProperties.forEach((prop) => {
+					displayFeat[prop] = feat[prop];
+				});
+				return displayFeat;
+			});
+
+			var tractID = null;
+
+			for( f in displayFeatures ) {
+				if(displayFeatures[f].properties.GEOID != null) {
+					tractID = displayFeatures[f].properties.GEOID;
+				}
+			}
+
+			if(tractID == null) {
+				return; // no GEOID, bail
+			}
+
+			for( p in parseResults.data ) {
+				if(parseResults.data[p].GEOID == tractID) {
+
+					// document.getElementById('features').innerHTML = JSON.stringify(displayFeatures,null,2);
+					document.getElementById('SE_A03001_003').innerHTML = parseResults.data[p].SE_A03001_003;
+					document.getElementById('SE_A18005_001').innerHTML = parseResults.data[p].SE_A18005_001;
+					document.getElementById('SE_B18002_002').innerHTML = parseResults.data[p].SE_B18002_002;
+					document.getElementById('SE_B18002_003').innerHTML = parseResults.data[p].SE_B18002_003;
+					document.getElementById('SE_A08002B_003').innerHTML = parseResults.data[p].SE_A08002B_003;
+					document.getElementById('SE_A10011_003').innerHTML = parseResults.data[p].SE_A10011_003;
+					document.getElementById('SE_A10039B_009').innerHTML = parseResults.data[p].SE_A10039B_009;
+
+					document.getElementById('best-mase-model').innerHTML =  models[parseResults.data[p].best_model_mase];
+					document.getElementById('best-mase').innerHTML = parseResults.data[p].best_mase;
+					document.getElementById('best-rmse').innerHTML = parseResults.data[p].best_rmse;
+					document.getElementById('average-mase').innerHTML = parseResults.data[p].average_mase
+					document.getElementById('average-rmse').innerHTML = parseResults.data[p].average_rmse
+
+				}
+			}
+		});
+
+
+	</script>
+ 
+</body>
+</html>
