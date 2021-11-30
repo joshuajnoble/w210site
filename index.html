@@ -109,6 +109,7 @@
       <div class="hero-unit">
         <h2>BERKELEY MIDS CAPSTONE</h2>
         <h1>Modeling Eviction Relief</h1>
+        <h3>Young Koung Kim, Joshua Noble, Elaine Chang</h3>
       </div>
 
       <!-- Example row of columns -->
@@ -126,6 +127,10 @@
       <div class="row" id="data">
         <div class="span12">
           <h2>Our Data</h2>
+
+          <p>Our eviction data was compiled from several sources. The <a href="https://evictionlab.org/">Eviction Lab at Princeton University</a> provided us with historical data for Dallas and Houston that ran from 2001 until 2018. For 2018 until November 2021, we collected data from Dallas County Court records and Harris County Court records and then combined that with the data from the Eviction Lab to give us a 10 year picture of the evictions in each census tract.
+           </p>
+
            <p>For demographic data, we used the US Census Bureau’s American Community Survey. As of Fall 2021 neither the ACS 1-year nor 5-year estimates were available for 2020 or 2021, so we’re making use of data from 2010 to the end of 2019 in order to build our model. We believe that adding in collected data from 2020 paired with the associated demographic and economic data would lead to the same forecasting power.
            </p>
         </div>
@@ -173,13 +178,15 @@
         <div class="span6">
           <div id="dallas_features">
 
-            <h3>Tract ID <span id="dal-geoid"></span></h3>
+            <h3>Tract ID:  <span id="dal-geoid"></span></h3>
 
             <h3>Eviction Forecast For Tract</h3>
 
             <p>Actual Evictions in October, 2019: <span id="dal-end-evictions"></span></p>
             <p>Forecast Evictions in December, 2019: <span id="dal-forecast-evictions"></span></p>
             <p>Actual Evictions December, 2019: <span id="dal-actual-evictions"></span></p>
+            <p>Average claim for tract: <span id="dal-average-claim"></span></p>
+            <p>Total forecast claim amount: <span id="dal-forecast-claims"></span></p>
 
             <h3>Tract Demographics</h3>
 
@@ -215,13 +222,15 @@
         <div class="span6">
           <div id="houston_features">
 
-            <h3>Tract ID <span id="hou-geoid"></span></h3>
+            <h3>Tract ID: <span id="hou-geoid"></span></h3>
 
             <h3>Eviction Forecast For Tract</h3>
 
             <p>Actual Evictions in October, 2019: <span id="hou-end-evictions"></span></p>
             <p>Forecast Evictions in December, 2019: <span id="hou-forecast-evictions"></span></p>
             <p>Actual Evictions December, 2019: <span id="hou-actual-evictions"></span></p>
+            <p>Average claim for tract: <span id="hou-average-claim"></span></p>
+            <p>Total forecast claim amount: <span id="hou-forecast-claims"></span></p>
 
             <h3>Tract Demographics</h3>
 
@@ -261,16 +270,33 @@
 
 
     var parseResults = null;
+    var claimAmounts = null;
 
     Papa.parse("testing_data.csv", {
       download: true,
       header: true,
       delimiter: ',',
       complete: function(results) {
-        console.log(results);
         parseResults = results;
       }
     });
+
+    Papa.parse("mean_claim_by_geoid.csv", {
+      download: true,
+      header: true,
+      delimiter: ',',
+      complete: function(results) {
+        claimAmounts = results;
+      }
+    });
+
+    function findClaimsByTract(t) {
+      for( c in claimAmounts.data ){
+        if(claimAmounts.data[c].GEOID == t ) {
+          return claimAmounts.data[c].claim;
+        }
+      }
+    }
 
     mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zaHVham5vYmxlYmVya2VsZXkiLCJhIjoiY2t3a3htbGoyMDdmMzJ1dW56c2Vmb2hnayJ9.NozspSickipOVFVsBlcPBw';
     const dallas_map = new mapboxgl.Map({
@@ -330,6 +356,9 @@
 
           document.getElementById('dal-geoid').innerHTML = tractID;
 
+          document.getElementById('dal-average-claim').innerHTML = '$' + Math.round(findClaimsByTract(tractID));
+          document.getElementById('dal-forecast-claims').innerHTML = '$' + Math.round(findClaimsByTract(tractID));
+
           // document.getElementById('features').innerHTML = JSON.stringify(displayFeatures,null,2);
           document.getElementById('dal_A03001_003').innerHTML = parseResults.data[p].SE_A03001_003;
           document.getElementById('dal_A18005_001').innerHTML = '$' + Math.round(parseResults.data[p].SE_A18005_001);
@@ -388,6 +417,9 @@
         if(parseResults.data[p].GEOID == tractID) {
 
           document.getElementById('hou-geoid').innerHTML = tractID;
+
+          document.getElementById('hou-average-claim').innerHTML = '$' + Math.round(findClaimsByTract(tractID));
+          document.getElementById('hou-forecast-claims').innerHTML = '$' + Math.round(findClaimsByTract(tractID));
 
           // document.getElementById('features').innerHTML = JSON.stringify(displayFeatures,null,2);
           document.getElementById('hou_A03001_003').innerHTML = parseResults.data[p].SE_A03001_003;
