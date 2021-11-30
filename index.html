@@ -3,9 +3,14 @@
   <head>
     <meta charset="utf-8">
     <title>Modeling Eviction Relief Funding</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <meta name="description" content="">
     <meta name="author" content="">
+
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js"></script>
+    <script src="papaparse.min.js"></script>
 
     <!-- Le styles -->
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -27,6 +32,46 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="bootstrap/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="bootstrap/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
+
+    <style>
+
+    /*map { position: absolute; top: 0; bottom: 0; width: 50%; }*/
+    .map { overflow: visible; width: 600px; min-width: 600px; min-height: 600px;}
+
+    #dallas_features {
+      /*position: absolute;
+      top: 0;*/
+      right: 0;
+      /*bottom: 0;*/
+      /*overflow: auto;*/
+      word-wrap: break-word;
+      font-family: sans-serif;
+      padding-left: 20px;
+    }
+
+    #houston_features {
+      /*position: absolute;
+      top: 0;*/
+      right: 0;
+      /*bottom: 0;*/
+      /*overflow: auto;*/
+      word-wrap: break-word;
+      font-family: sans-serif;
+      padding-left: 20px;
+    }
+
+    #features > span {
+      font-weight: 400;
+    }
+
+    .map canvas {
+      cursor: crosshair;
+    }
+
+
+    </style>
+
+
   </head>
 
   <body>
@@ -46,6 +91,7 @@
               <li><a href="#about">Our Goal</a></li>
               <li><a href="#data">Data</a></li>
               <li><a href="#modeling">Modeling</a></li>
+              <li><a href="#results">Results</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -100,18 +146,267 @@
         </div>
       </div>
 
+      <!-- Example row of columns -->
+      <div class="row" id="results">
+        <div class="span12">
+          <h2>Modeling Results</h2>
+           <p>We trained our forecasting models on 70% of our data and then trained the ensembling model on 20% of our data, leaving 10% for testing. This 10% was 110 census tracts across Dallas and Houston. To view how each tract performed 
+           </p>
+
+        </div>
+      </div>
+
+      <!-- Example row of columns -->
+      <div class="row" id="dallas-results">
+        <div class="span12" style="padding-bottom: 10px; padding-top: 10px;">
+          <h2> Results on test tracts in Dallas County </h2>
+          <p> This map shows the characteristics of test tracts in Dallas and how those performed using two metrics: Root Mean Squared Error (RMSE) and Mean Absolute Squared Error (MASE).</p>
+        </div>
+        <div class="span6">
+          <div class="map" id="dallas_map"></div>
+        </div>
+        <div class="span6">
+          <div id="dallas_features">
+
+            <h3>Tract ID <span id="dal-geoid"></span></h3>
+
+            <h3>Eviction Forecast For Tract</h3>
+
+            <p>Actual Evictions in October, 2019: <span id="dal-end-evictions"></span></p>
+            <p>Forecast Evictions in December, 2019: <span id="dal-forecast-evictions"></span></p>
+            <p>Actual Evictions December, 2019: <span id="dal-actual-evictions"></span></p>
+
+            <h3>Tract Demographics</h3>
+
+            <p>Total Population Black or African American Alone: <span id="dal_A03001_003"></span></p>
+            <p>Average Gross Rent for Renter-Occupied Housing Units: <span id="dal_A18005_001"></span></p>
+            <p>Households paying 30-50% of income in rent: <span id="dal_B18002_002"></span></p>
+            <p>Households paying 50% or more of income in rent: <span id="dal_B18002_003"></span></p>
+            <p>Residents who moved within the same county in the last year: <span id="dal_A08002B_003"></span></p>
+            <p>Households with no earnings reported in the last year: <span id="dal_A10011_003"></span></p>
+            <p>Household income of $20,000-$34,999 spending >30% of income on rent: <span id="dal_A10039B_009"></span></p>
+
+            <h3>Model Performance</h3>
+
+            <p>Best MASE Model: <span id="dal-best-mase-model"></span></p>
+            <p>Best MASE <span id="dal-best-mase"></span></p>
+            <p>Average MASE: <span id="dal-average-mase"></span></p>
+            <p>Best RMSE: <span id="dal-best-rmse"></span></p>
+            <p>Average RMSE: <span id="dal-average-rmse"></span></p>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Example row of columns -->
+      <div class="row" id="houston-results">
+        <div class="span12" style="padding-bottom: 10px; padding-top: 10px;">
+          <h2> Results on test tracts in Harris County </h2>
+          <p> This map shows the characteristics of test tracts in Houston and how those performed using two metrics: Root Mean Squared Error (RMSE) and Mean Absolute Squared Error (MASE).</p>
+        </div>
+        <div class="span6">
+          <div class="map" id="houston_map"></div>
+        </div>
+        <div class="span6">
+          <div id="houston_features">
+
+            <h3>Tract ID <span id="hou-geoid"></span></h3>
+
+            <h3>Eviction Forecast For Tract</h3>
+
+            <p>Actual Evictions in October, 2019: <span id="hou-end-evictions"></span></p>
+            <p>Forecast Evictions in December, 2019: <span id="hou-forecast-evictions"></span></p>
+            <p>Actual Evictions December, 2019: <span id="hou-actual-evictions"></span></p>
+
+            <h3>Tract Demographics</h3>
+
+            <p>Total Population Black or African American Alone: <span id="hou_A03001_003"></span></p>
+            <p>Average Gross Rent for Renter-Occupied Housing Units: <span id="hou_A18005_001"></span></p>
+            <p>Households paying 30-50% of income in rent: <span id="hou_B18002_002"></span></p>
+            <p>Households paying 50% or more of income in rent: <span id="hou_B18002_003"></span></p>
+            <p>Residents who moved within the same county in the last year: <span id="hou_A08002B_003"></span></p>
+            <p>Households with no earnings reported in the last year: <span id="hou_A10011_003"></span></p>
+            <p>Household income of $20,000-$34,999 spending >30% of income on rent: <span id="hou_A10039B_009"></span></p>
+
+            <h3>Model Performance</h3>
+
+            <p>Best MASE Model: <span id="hou-best-mase-model"></span></p>
+            <p>Best MASE <span id="hou-best-mase"></span></p>
+            <p>Average MASE: <span id="hou-average-mase"></span></p>
+            <p>Best RMSE: <span id="hou-best-rmse"></span></p>
+            <p>Average RMSE: <span id="hou-average-rmse"></span></p>
+
+          </div>
+        </div>
+      </div>
+
+
+
+      </div>
+
       <hr>
 
       <footer>
-        <p>&copy; Company 2012</p>
+        <p></p>
       </footer>
 
     </div> <!-- /container -->
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.js"></script>
+    <script>
+
+
+    var parseResults = null;
+
+    Papa.parse("testing_data.csv", {
+      download: true,
+      header: true,
+      delimiter: ',',
+      complete: function(results) {
+        console.log(results);
+        parseResults = results;
+      }
+    });
+
+    mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zaHVham5vYmxlYmVya2VsZXkiLCJhIjoiY2t3a3htbGoyMDdmMzJ1dW56c2Vmb2hnayJ9.NozspSickipOVFVsBlcPBw';
+    const dallas_map = new mapboxgl.Map({
+      container: 'dallas_map', // container ID
+      style: 'mapbox://styles/joshuajnobleberkeley/ckwkxyp94010v14rxd9lk11jy', // style URL
+      center: [-96.79, 32.77], // starting position [lng, lat]
+      zoom: 10 // starting zoom
+    });
+
+
+    const houston_map = new mapboxgl.Map({
+      container: 'houston_map', // container ID
+      style: 'mapbox://styles/joshuajnobleberkeley/ckwkxyp94010v14rxd9lk11jy', // style URL
+      center: [-95.36, 29.76], // starting position [lng, lat]
+      zoom: 10 // starting zoom
+    });
+
+    var models = {1:"NBEATS", 2:"LSTM", 3:"GRU", 4:"BRNN" };
+
+    dallas_map.on('mousemove', (event) => {
+      const features = dallas_map.queryRenderedFeatures(event.point);
+       
+      // Limit the number of properties we're displaying for
+      // legibility and performance
+      const displayProperties = [
+        'type',
+        'properties',
+        'id',
+        'layer',
+        'source',
+        'sourceLayer',
+        'state'
+      ];
+       
+      const displayFeatures = features.map((feat) => {
+        const displayFeat = {};
+        displayProperties.forEach((prop) => {
+          displayFeat[prop] = feat[prop];
+        });
+        return displayFeat;
+      });
+
+      var tractID = null;
+
+      for( f in displayFeatures ) {
+        if(displayFeatures[f].properties.GEOID != null) {
+          tractID = displayFeatures[f].properties.GEOID;
+        }
+      }
+
+      if(tractID == null) {
+        return; // no GEOID, bail
+      }
+
+      for( p in parseResults.data ) {
+        if(parseResults.data[p].GEOID == tractID) {
+
+          document.getElementById('dal-geoid').innerHTML = tractID;
+
+          // document.getElementById('features').innerHTML = JSON.stringify(displayFeatures,null,2);
+          document.getElementById('dal_A03001_003').innerHTML = parseResults.data[p].SE_A03001_003;
+          document.getElementById('dal_A18005_001').innerHTML = '$' + Math.round(parseResults.data[p].SE_A18005_001);
+          document.getElementById('dal_B18002_002').innerHTML = parseResults.data[p].SE_B18002_002;
+          document.getElementById('dal_B18002_003').innerHTML = parseResults.data[p].SE_B18002_003;
+          document.getElementById('dal_A08002B_003').innerHTML = parseResults.data[p].SE_A08002B_003;
+          document.getElementById('dal_A10011_003').innerHTML = parseResults.data[p].SE_A10011_003;
+          document.getElementById('dal_A10039B_009').innerHTML = parseResults.data[p].SE_A10039B_009;
+
+          document.getElementById('dal-best-mase-model').innerHTML =  models[parseResults.data[p].best_model_mase];
+          document.getElementById('dal-best-mase').innerHTML = parseResults.data[p].best_mase;
+          document.getElementById('dal-best-rmse').innerHTML = parseResults.data[p].best_rmse;
+          document.getElementById('dal-average-mase').innerHTML = parseResults.data[p].average_mase
+          document.getElementById('dal-average-rmse').innerHTML = parseResults.data[p].average_rmse
+
+        }
+      }
+    });
+
+    houston_map.on('mousemove', (event) => {
+      const features = houston_map.queryRenderedFeatures(event.point);
+       
+      // Limit the number of properties we're displaying for
+      // legibility and performance
+      const displayProperties = [
+        'type',
+        'properties',
+        'id',
+        'layer',
+        'source',
+        'sourceLayer',
+        'state'
+      ];
+       
+      const displayFeatures = features.map((feat) => {
+        const displayFeat = {};
+        displayProperties.forEach((prop) => {
+          displayFeat[prop] = feat[prop];
+        });
+        return displayFeat;
+      });
+
+      var tractID = null;
+
+      for( f in displayFeatures ) {
+        if(displayFeatures[f].properties.GEOID != null) {
+          tractID = displayFeatures[f].properties.GEOID;
+        }
+      }
+
+      if(tractID == null) {
+        return; // no GEOID, bail
+      }
+
+      for( p in parseResults.data ) {
+        if(parseResults.data[p].GEOID == tractID) {
+
+          document.getElementById('hou-geoid').innerHTML = tractID;
+
+          // document.getElementById('features').innerHTML = JSON.stringify(displayFeatures,null,2);
+          document.getElementById('hou_A03001_003').innerHTML = parseResults.data[p].SE_A03001_003;
+          document.getElementById('hou_A18005_001').innerHTML = '$' + Math.round(parseResults.data[p].SE_A18005_001);
+          document.getElementById('hou_B18002_002').innerHTML = parseResults.data[p].SE_B18002_002;
+          document.getElementById('hou_B18002_003').innerHTML = parseResults.data[p].SE_B18002_003;
+          document.getElementById('hou_A08002B_003').innerHTML = parseResults.data[p].SE_A08002B_003;
+          document.getElementById('hou_A10011_003').innerHTML = parseResults.data[p].SE_A10011_003;
+          document.getElementById('hou_A10039B_009').innerHTML = parseResults.data[p].SE_A10039B_009;
+
+          document.getElementById('hou-best-mase-model').innerHTML =  models[parseResults.data[p].best_model_mase];
+          document.getElementById('hou-best-mase').innerHTML = parseResults.data[p].best_mase;
+          document.getElementById('hou-best-rmse').innerHTML = parseResults.data[p].best_rmse;
+          document.getElementById('hou-average-mase').innerHTML = parseResults.data[p].average_mase
+          document.getElementById('hou-average-rmse').innerHTML = parseResults.data[p].average_rmse
+
+        }
+      }
+    });
+
+
+  </script>
+
+<!--     <script src="bootstrap/js/jquery.js"></script>
     <script src="bootstrap/js/bootstrap-transition.js"></script>
     <script src="bootstrap/js/bootstrap-alert.js"></script>
     <script src="bootstrap/js/bootstrap-modal.js"></script>
@@ -123,7 +418,7 @@
     <script src="bootstrap/js/bootstrap-button.js"></script>
     <script src="bootstrap/js/bootstrap-collapse.js"></script>
     <script src="bootstrap/js/bootstrap-carousel.js"></script>
-    <script src="bootstrap/js/bootstrap-typeahead.js"></script>
+    <script src="bootstrap/js/bootstrap-typeahead.js"></script> -->
 
   </body>
 </html>
