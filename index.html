@@ -107,9 +107,15 @@
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit">
-        <h2>BERKELEY MIDS CAPSTONE</h2>
-        <h1>Modeling Eviction Relief</h1>
-        <h3>Young Koung Kim, Joshua Noble, Elaine Chang</h3>
+        <div>
+          <h2>BERKELEY MIDS CAPSTONE</h2>
+        </div>
+        <div  style="padding-top:20px;">
+          <h1>Modeling Eviction Relief</h1>
+        </div>
+        <div style="padding-top:20px;">
+          <h3>Young Koung Kim, Joshua Noble, Elaine Chang</h3>
+        </div>
       </div>
 
       <!-- Example row of columns -->
@@ -133,6 +139,55 @@
 
            <p>For demographic data, we used the US Census Bureau’s American Community Survey. As of Fall 2021 neither the ACS 1-year nor 5-year estimates were available for 2020 or 2021, so we’re making use of data from 2010 to the end of 2019 in order to build our model. We believe that adding in collected data from 2020 paired with the associated demographic and economic data would lead to the same forecasting power.
            </p>
+
+           <p>
+            The American Community Surveys include several thousand variables that describe each census tract. We wanted to select characteristics with statistical power that would help us create the most accurate forecast when included with the historical eviction data for that tract. We selected this by using a panel regression to help us identify which demographic statistics are most important over our 10 year time-frame. The formula that we followed uses the following variables:
+
+            <table class="table table-striped">
+              <tr>
+                  <th>ACS Code</th>
+                  <th>Value</th>
+                </tr>
+                <tr>
+                  <td>A03001_003</td>
+                  <td>Total Population Black or African American</td>
+                </tr>
+                <tr>
+                  <td>A06001_005</td>
+                  <td>Average Gross Rent for Renter-Occupied Housing</td>
+                </tr>
+                <tr>
+                  <td>A08002B_003</td>
+                  <td>Households paying 30-50% of income in rent</td>
+                </tr>
+                <tr>
+                  <td>A10039B_009</td>
+                  <td>Households paying 50% or more of income in rent</td>
+                </tr>
+                <tr>
+                  <td>B18002_002</td>
+                  <td>Residents who moved within the same county in the last year</td>
+                </tr>
+                <tr>
+                  <td>B18002_003</td>
+                  <td>Households with no earnings reported in the last year</td>
+                </tr>
+                <tr>
+                  <td>A10011_003</td>
+                  <td>Household income of $20,000-$34,999 spending >30% of income on rent</td>
+                </tr>
+            </table>
+
+            Our formula was the following:
+
+            <pre>
+              smoothed ~ A03001_003 + A06001_005 + A08002B_003 + A10039B_009 + B18002_003 + B18002_002 + A10011_003 + entity_effects
+            </pre>
+
+            When run as a Panel Regression this gave us an R-squared (Between) of 0.9592 an R-squared (Within) of 0.4564 and an R-squared (Overall) of 0.6482.
+
+           </p>
+
         </div>
       </div>
 
@@ -160,7 +215,7 @@
       <div class="row" id="results">
         <div class="span12">
           <h2>Modeling Results</h2>
-           <p>We trained our forecasting models on 70% of our data and then trained the ensembling model on 20% of our data, leaving 10% for testing. This 10% was 110 census tracts across Dallas and Houston. To view how each tract performed 
+           <p>We trained our forecasting models on 70% of our data and then trained the ensembling model on 20% of our data, leaving 10% for testing. This 10% was 110 census tracts across Dallas and Houston. To view how each tract performed hover over a tract. The results on the right will update to show how our model performed in each tract.
            </p>
 
         </div>
