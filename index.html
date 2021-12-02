@@ -117,7 +117,8 @@
           <h1>Modeling Eviction Relief</h1>
         </div>
         <div style="padding-top:20px;">
-          <h3>Young Koung Kim, Joshua Noble, Elaine Chang</h3>
+          <h3>Project Team: Young Koung Kim, Joshua Noble, Elaine Chang</h3>
+          <h3>Project Advisors: Fred Nugen, Alberto Todeschini</h3>
         </div>
       </div>
 
@@ -127,7 +128,7 @@
           <h2>Our Goal</h2>
            <p>Our goal is to create a model that uses the demographic and economic data at the census tract level in order to predict eviction rates within that census tract. This model can be used by housing advocates, drivers and designers of public policy, and emergency housing and shelter organizations to understand where need might be most acute and how much might be needed in order to forestall the predicted evictions for a given census tract. Our analysis relies on the records of eviction cases filed in civil courts across the United States, as well as data on eviction moratoria at the state, county, and municipal levels. Our project goal is to model and predict the number of eviction counts in Houston, Texas and Dallas, Texas by census tract.
 
-           Using the model would require that a user provide the demographic data and historical eviction data for a census tract in order to generate a forecast. Our forecasts provide estimates with an average accuracy of 0.38 evictions for an eight week forecast. This means that if the model is provided the correct data, it should be able to predict the number of evictions that will occur in two months time in a given census tract to within 0.5 evictions.
+           Using the model would require that a user provide the demographic data and historical eviction data for a census tract in order to generate a forecast. Our forecasts provide estimates with an mean error of 0.22 evictions and median error of 0.13 for an eight week forecast. This means that if the model is provided the correct data, it should be able to predict the number of evictions that will occur in two months time in a given census tract to within ~0.22 evictions.
            </p>
         </div>
       </div>
@@ -240,9 +241,8 @@
 
             <h3>Eviction Forecast For Tract</h3>
 
-            <p>Actual Evictions in October, 2019: <span id="dal-end-evictions"></span></p>
-            <p>Forecast Evictions in December, 2019: <span id="dal-forecast-evictions"></span></p>
-            <p>Actual Evictions December, 2019: <span id="dal-actual-evictions"></span></p>
+            <p>Forecast Evictions for week of 12/29/2019: <span id="dal-forecast-evictions"></span></p>
+            <p>Actual Evictions for week of 12/29/2019: <span id="dal-actual-evictions"></span></p>
             <p>Average claim for tract: <span id="dal-average-claim"></span></p>
             <p>Total forecast claim amount: <span id="dal-forecast-claims"></span></p>
 
@@ -282,11 +282,8 @@
 
             <h3>Tract ID: <span id="hou-geoid"></span></h3>
 
-            <h3>Eviction Forecast For Tract</h3>
-
-            <p>Actual Evictions in October, 2019: <span id="hou-end-evictions"></span></p>
-            <p>Forecast Evictions in December, 2019: <span id="hou-forecast-evictions"></span></p>
-            <p>Actual Evictions December, 2019: <span id="hou-actual-evictions"></span></p>
+            <p>Forecast Evictions for week of 12/29/2019: <span id="hou-forecast-evictions"></span></p>
+            <p>Actual Evictions for week of 12/29/2019: <span id="hou-actual-evictions"></span></p>
             <p>Average claim for tract: <span id="hou-average-claim"></span></p>
             <p>Total forecast claim amount: <span id="hou-forecast-claims"></span></p>
 
@@ -327,15 +324,16 @@
     <script>
 
 
-    var parseResults = null;
+    var modelComparison = null;
     var claimAmounts = null;
+    var predictions = null;
 
-    Papa.parse("testing_data.csv", {
+    Papa.parse("model_comparision.csv", {
       download: true,
       header: true,
       delimiter: ',',
       complete: function(results) {
-        parseResults = results;
+        modelComparison = results;
       }
     });
 
@@ -345,6 +343,15 @@
       delimiter: ',',
       complete: function(results) {
         claimAmounts = results;
+      }
+    });
+
+    Papa.parse("prediction_results.csv", {
+      download: true,
+      header: true,
+      delimiter: ',',
+      complete: function(results) {
+        predictions = results;
       }
     });
 
@@ -409,8 +416,8 @@
         return; // no GEOID, bail
       }
 
-      for( p in parseResults.data ) {
-        if(parseResults.data[p].GEOID == tractID) {
+      for( p in modelComparison.data ) {
+        if(modelComparison.data[p].GEOID == tractID) {
 
           document.getElementById('dal-geoid').innerHTML = tractID;
 
@@ -418,22 +425,31 @@
           document.getElementById('dal-forecast-claims').innerHTML = '$' + Math.round(findClaimsByTract(tractID));
 
           // document.getElementById('features').innerHTML = JSON.stringify(displayFeatures,null,2);
-          document.getElementById('dal_A03001_003').innerHTML = parseResults.data[p].SE_A03001_003;
-          document.getElementById('dal_A18005_001').innerHTML = '$' + Math.round(parseResults.data[p].SE_A18005_001);
-          document.getElementById('dal_B18002_002').innerHTML = parseResults.data[p].SE_B18002_002;
-          document.getElementById('dal_B18002_003').innerHTML = parseResults.data[p].SE_B18002_003;
-          document.getElementById('dal_A08002B_003').innerHTML = parseResults.data[p].SE_A08002B_003;
-          document.getElementById('dal_A10011_003').innerHTML = parseResults.data[p].SE_A10011_003;
-          document.getElementById('dal_A10039B_009').innerHTML = parseResults.data[p].SE_A10039B_009;
+          document.getElementById('dal_A03001_003').innerHTML = modelComparison.data[p].SE_A03001_003;
+          document.getElementById('dal_A18005_001').innerHTML = '$' + Math.round(modelComparison.data[p].SE_A18005_001);
+          document.getElementById('dal_B18002_002').innerHTML = modelComparison.data[p].SE_B18002_002;
+          document.getElementById('dal_B18002_003').innerHTML = modelComparison.data[p].SE_B18002_003;
+          document.getElementById('dal_A08002B_003').innerHTML = modelComparison.data[p].SE_A08002B_003;
+          document.getElementById('dal_A10011_003').innerHTML = modelComparison.data[p].SE_A10011_003;
+          document.getElementById('dal_A10039B_009').innerHTML = modelComparison.data[p].SE_A10039B_009;
 
-          document.getElementById('dal-best-mase-model').innerHTML =  models[parseResults.data[p].best_model_mase];
-          document.getElementById('dal-best-mase').innerHTML = parseResults.data[p].best_mase;
-          document.getElementById('dal-best-rmse').innerHTML = parseResults.data[p].best_rmse;
-          document.getElementById('dal-average-mase').innerHTML = parseResults.data[p].average_mase
-          document.getElementById('dal-average-rmse').innerHTML = parseResults.data[p].average_rmse
+          document.getElementById('dal-best-mase-model').innerHTML =  models[modelComparison.data[p].best_model_mase];
+          document.getElementById('dal-best-mase').innerHTML = modelComparison.data[p].best_mase;
+          document.getElementById('dal-best-rmse').innerHTML = modelComparison.data[p].best_rmse;
+          document.getElementById('dal-average-mase').innerHTML = modelComparison.data[p].average_mase
+          document.getElementById('dal-average-rmse').innerHTML = modelComparison.data[p].average_rmse
 
         }
       }
+
+      for( p in predictions.data ) {
+        if(predictions.data[p].GEOID == tractID) {
+          document.getElementById('dal-actual-evictions').innerHTML = Math.round(predictions.data[p].predict);
+          document.getElementById('dal-forecast-evictions').innerHTML = Math.round(predictions.data[p].predict);
+          document.getElementById('dal-forecast-claims').innerHTML = '$' + (Math.round(predictions.data[p].predict) * Math.round(findClaimsByTract(tractID)));
+        }
+      }
+
     });
 
     houston_map.on('mousemove', (event) => {
@@ -471,29 +487,37 @@
         return; // no GEOID, bail
       }
 
-      for( p in parseResults.data ) {
-        if(parseResults.data[p].GEOID == tractID) {
+      for( p in modelComparison.data ) {
+        if(modelComparison.data[p].GEOID == tractID) {
 
           document.getElementById('hou-geoid').innerHTML = tractID;
 
           document.getElementById('hou-average-claim').innerHTML = '$' + Math.round(findClaimsByTract(tractID));
-          document.getElementById('hou-forecast-claims').innerHTML = '$' + Math.round(findClaimsByTract(tractID));
 
           // document.getElementById('features').innerHTML = JSON.stringify(displayFeatures,null,2);
-          document.getElementById('hou_A03001_003').innerHTML = parseResults.data[p].SE_A03001_003;
-          document.getElementById('hou_A18005_001').innerHTML = '$' + Math.round(parseResults.data[p].SE_A18005_001);
-          document.getElementById('hou_B18002_002').innerHTML = parseResults.data[p].SE_B18002_002;
-          document.getElementById('hou_B18002_003').innerHTML = parseResults.data[p].SE_B18002_003;
-          document.getElementById('hou_A08002B_003').innerHTML = parseResults.data[p].SE_A08002B_003;
-          document.getElementById('hou_A10011_003').innerHTML = parseResults.data[p].SE_A10011_003;
-          document.getElementById('hou_A10039B_009').innerHTML = parseResults.data[p].SE_A10039B_009;
+          document.getElementById('hou_A03001_003').innerHTML = modelComparison.data[p].SE_A03001_003;
+          document.getElementById('hou_A18005_001').innerHTML = '$' + Math.round(modelComparison.data[p].SE_A18005_001);
+          document.getElementById('hou_B18002_002').innerHTML = modelComparison.data[p].SE_B18002_002;
+          document.getElementById('hou_B18002_003').innerHTML = modelComparison.data[p].SE_B18002_003;
+          document.getElementById('hou_A08002B_003').innerHTML = modelComparison.data[p].SE_A08002B_003;
+          document.getElementById('hou_A10011_003').innerHTML = modelComparison.data[p].SE_A10011_003;
+          document.getElementById('hou_A10039B_009').innerHTML = modelComparison.data[p].SE_A10039B_009;
 
-          document.getElementById('hou-best-mase-model').innerHTML =  models[parseResults.data[p].best_model_mase];
-          document.getElementById('hou-best-mase').innerHTML = parseResults.data[p].best_mase;
-          document.getElementById('hou-best-rmse').innerHTML = parseResults.data[p].best_rmse;
-          document.getElementById('hou-average-mase').innerHTML = parseResults.data[p].average_mase
-          document.getElementById('hou-average-rmse').innerHTML = parseResults.data[p].average_rmse
+          document.getElementById('hou-best-mase-model').innerHTML =  models[modelComparison.data[p].best_model_mase];
+          document.getElementById('hou-best-mase').innerHTML = modelComparison.data[p].best_mase;
+          document.getElementById('hou-best-rmse').innerHTML = modelComparison.data[p].best_rmse;
+          document.getElementById('hou-average-mase').innerHTML = modelComparison.data[p].average_mase
+          document.getElementById('hou-average-rmse').innerHTML = modelComparison.data[p].average_rmse
 
+        }
+      }
+
+      for( p in predictions.data ) {
+        if(predictions.data[p].GEOID == tractID) {
+          //hou-actual-evictions
+          document.getElementById('hou-actual-evictions').innerHTML = Math.round(predictions.data[p].predict);
+          document.getElementById('hou-forecast-evictions').innerHTML = Math.round(predictions.data[p].predict);
+          document.getElementById('hou-forecast-claims').innerHTML = '$' + (Math.round(predictions.data[p].predict) * Math.round(findClaimsByTract(tractID)));
         }
       }
     });
