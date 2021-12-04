@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Modeling Eviction Relief Funding</title>
+    <title>Forecasting Eviction Rates</title>
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <meta name="description" content="">
     <meta name="author" content="">
@@ -17,55 +17,6 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karla">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=DM+Serif+Display">
-    <style type="text/css">
-      body {
-        font-family: 'Karla', serif;
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      h1 {
-        font-family: 'DM+Serif+Display';
-      }
-
-    /*map { position: absolute; top: 0; bottom: 0; width: 50%; }*/
-    .map { overflow: visible; width: 600px; min-width: 600px; min-height: 600px;}
-
-    #dallas_features {
-      /*position: absolute;
-      top: 0;*/
-      right: 0;
-      /*bottom: 0;*/
-      /*overflow: auto;*/
-      word-wrap: break-word;
-      /*font-family: sans-serif;*/
-      padding-left: 20px;
-    }
-
-    #houston_features {
-      /*position: absolute;
-      top: 0;*/
-      right: 0;
-      /*bottom: 0;*/
-      /*overflow: auto;*/
-      word-wrap: break-word;
-      /*font-family: sans-serif;*/
-      padding-left: 20px;
-    }
-
-    #features > span {
-      font-weight: 400;
-    }
-
-    .map canvas {
-      cursor: crosshair;
-    }
-
-
-    .wrapper {
-      width:960px;
-      margin:0 auto;
-    }
-    </style>
 
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
@@ -80,6 +31,75 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="bootstrap/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
 
+    <style type="text/css">
+        body {
+          font-family: 'Karla', serif;
+          padding-top: 60px;
+          padding-bottom: 40px;
+          background-image: url('white-paper-texture.png');  
+          background-repeat: repeat-y;
+        }
+        h1 {
+          font-family: 'DM+Serif+Display';
+        }
+
+      /*map { position: absolute; top: 0; bottom: 0; width: 50%; }*/
+      .map { overflow: visible; width: 600px; min-width: 600px; min-height: 600px;}
+
+      #dallas_features {
+        /*position: absolute;
+        top: 0;*/
+        right: 0;
+        /*bottom: 0;*/
+        /*overflow: auto;*/
+        word-wrap: break-word;
+        /*font-family: sans-serif;*/
+        padding-left: 20px;
+      }
+
+      #houston_features {
+        /*position: absolute;
+        top: 0;*/
+        right: 0;
+        /*bottom: 0;*/
+        /*overflow: auto;*/
+        word-wrap: break-word;
+        /*font-family: sans-serif;*/
+        padding-left: 20px;
+      }
+
+      #features > span {
+        font-weight: 400;
+      }
+
+      .map canvas {
+        cursor: crosshair;
+      }
+
+
+      .wrapper {
+        width:960px;
+        margin:0 auto;
+      }
+
+      .navbar {
+        font-size: 16px;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+
+      .header-holder {
+        background-color: #444;
+        color: #fff;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        padding-left: 5px;
+      }
+
+      </style>
+
   </head>
 
   <body>
@@ -92,7 +112,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">Modeling Eviction Relief Funding</a>
+          <a class="brand" href="#" style="font-size: 24px;">Forecasting Eviction Rates</a>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
@@ -100,6 +120,7 @@
               <li><a href="#data">Data</a></li>
               <li><a href="#modeling">Modeling</a></li>
               <li><a href="#results">Results</a></li>
+              <li><a href="#acknowledgements">Acknowledgements</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -114,7 +135,7 @@
           <h2>BERKELEY MIDS CAPSTONE</h2>
         </div>
         <div  style="padding-top:20px;">
-          <h1>Modeling Eviction Relief</h1>
+          <h1>Forecasting Eviction Rates</h1>
         </div>
         <div style="padding-top:20px;">
           <h3>Project Team: Young Koung Kim, Joshua Noble, Elaine Chang</h3>
@@ -125,10 +146,12 @@
       <!-- Example row of columns -->
       <div class="row" id="about">
         <div class="span12">
+          <div class="header-holder">
           <h2>Our Goal</h2>
+          </div>
            <p>Our goal is to create a model that uses the demographic and economic data at the census tract level in order to predict eviction rates within that census tract. This model can be used by housing advocates, drivers and designers of public policy, and emergency housing and shelter organizations to understand where need might be most acute and how much might be needed in order to forestall the predicted evictions for a given census tract. Our analysis relies on the records of eviction cases filed in civil courts across the United States, as well as data on eviction moratoria at the state, county, and municipal levels. Our project goal is to model and predict the number of eviction counts in Houston, Texas and Dallas, Texas by census tract.
 
-           Using the model would require that a user provide the demographic data and historical eviction data for a census tract in order to generate a forecast. Our forecasts provide estimates with an mean error of 0.22 evictions and median error of 0.13 for an eight week forecast. This means that if the model is provided the correct data, it should be able to predict the number of evictions that will occur in two months time in a given census tract to within ~0.22 evictions.
+           Using the model would require that a user provide the demographic data and historical eviction data for a census tract in order to generate a forecast. Our forecasts provide estimates with a <b>mean error of 0.135 evictions and median error of 0.138 evictions for an eight week forecast</b>. This means that if the model is provided the correct data, it should be able to predict the number of evictions that will occur in two months time in a given census tract to within <b>~0.135 evictions</b>.
            </p>
         </div>
       </div>
@@ -136,7 +159,9 @@
       <!-- Example row of columns -->
       <div class="row" id="data">
         <div class="span12">
-          <h2>Our Data</h2>
+          <div class="header-holder">
+            <h2>Our Data</h2>
+          </div>
 
           <p>Our eviction data was compiled from several sources. The <a href="https://evictionlab.org/">Eviction Lab at Princeton University</a> provided us with historical data for Dallas and Houston that ran from 2001 until 2018. For 2018 until November 2021, we collected data from Dallas County Court records and Harris County Court records and then combined that with the data from the Eviction Lab to give us a 10 year picture of the evictions in each census tract.
            </p>
@@ -195,10 +220,11 @@
         </div>
       </div>
 
-      <!-- Example row of columns -->
       <div class="row" id="modeling">
         <div class="span12">
+          <div class="header-holder">
           <h2>Modeling Process</h2>
+          </div>
            <p>Our model is an ensemble approach which uses four underlying predictor models to generate forecasts for eviction rates and then an ensembling model to select which forecasting model should be selected to provide the forecast. Certain models do better with certain sorts of data than others so an ensemble approach made the most sense in order to use the strengths of each models while not being constrained by their weaknesses.
            </p>
 
@@ -218,7 +244,9 @@
       <!-- Example row of columns -->
       <div class="row" id="results">
         <div class="span12">
+          <div class="header-holder">
           <h2>Modeling Results</h2>
+          </div>
            <p>We trained our forecasting models on 70% of our data and then trained the ensembling model on 20% of our data, leaving 10% for testing. This 10% was 110 census tracts across Dallas and Houston. To view how each tract performed hover over a tract. The results on the right will update to show how our model performed in each tract.
            </p>
 
@@ -228,7 +256,9 @@
       <!-- Example row of columns -->
       <div class="row" id="dallas-results">
         <div class="span12" style="padding-bottom: 10px; padding-top: 10px;">
+          <div class="header-holder">
           <h2> Results on test tracts in Dallas County </h2>
+          </div>
           <p> This map shows the characteristics of test tracts in Dallas and how those performed using two metrics: Root Mean Squared Error (RMSE) and Mean Absolute Squared Error (MASE).</p>
         </div>
         <div class="span6">
@@ -271,7 +301,9 @@
       <!-- Example row of columns -->
       <div class="row" id="houston-results">
         <div class="span12" style="padding-bottom: 10px; padding-top: 10px;">
+          <div class="header-holder">
           <h2> Results on test tracts in Harris County </h2>
+        </div>
           <p> This map shows the characteristics of test tracts in Houston and how those performed using two metrics: Root Mean Squared Error (RMSE) and Mean Absolute Squared Error (MASE).</p>
         </div>
         <div class="span6">
@@ -309,7 +341,26 @@
         </div>
       </div>
 
+      <div class="row" id="acknowledgements">
+        <div class="span12">
+          <div class="header-holder">
+           <h2> Acknowlegements </h2>
+         </div>
+           <p>A <em>huge</em> thank you to the w210 instructional team - Fred Nugen, Alberto Todeschini and Colorado Reed</p>
+        </div>
 
+        <div class="span12">
+           <p>Also a huge thank you to the subject matter experts both inside and outside the UC Berkeley School of Information who helped us:</p>
+        </div>
+
+        <div class="span6">
+          <p><li>The Eviction Lab at Princeton University</li> <li>Owen Wilson Chavez</li> <li>Jeff Reichman</li> <li>Matt Carey</li> <li>James Chang</li> <li>Rebecca Ann Johnson</li></p>
+        </div>
+
+        <div class="span6">
+          <ul><li>Jessica Li</li> <li>Mike Rivera</li> <li>Elizabeth Resor</li> <li>Aishah Newsom</li> <li>Zoe Kahn</li> <li>Saira Rahman</li></ul>
+        </div>
+      </div>
 
       </div>
 
