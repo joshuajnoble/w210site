@@ -98,6 +98,52 @@
         padding-left: 5px;
       }
 
+      .model-name {
+        font-size: 16px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .results-table, td, tr {
+        border: 1px solid black;
+      }
+
+      .results-table {
+        width: 100%;
+        font-size: 16px;
+      }
+
+      tr {
+        height: 32px;
+        text-align: center;
+      }
+
+      td {
+        height: 32px;
+        text-align: center;
+        min-width: 100px;
+      }
+
+      .result-green {
+        background-color: #7ABB81;
+      }
+
+      .result-lime-1 {
+        background-color: #C4D997;
+      }
+
+      .result-lime-2 {
+        background-color: #E1E59F;
+      }
+
+      .result-yellow {
+        background-color: #FCEEA6;
+      }
+
+      .result-lime-3 {
+        background-color: #94C68A;
+      }
+
       </style>
 
   </head>
@@ -121,6 +167,7 @@
               <li><a href="#modeling">Modeling</a></li>
               <li><a href="#results">Results</a></li>
               <li><a href="#acknowledgements">Acknowledgements</a></li>
+              <li><a href="#technical_deets">Technical Details</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -360,6 +407,169 @@
         <div class="span6">
           <ul><li>Jessica Li</li> <li>Mike Rivera</li> <li>Elizabeth Resor</li> <li>Aishah Newsom</li> <li>Zoe Kahn</li> <li>Saira Rahman</li></ul>
         </div>
+      </div>
+
+
+      <div class="row" id="technical_deets">
+        <div class="span12">
+          <div class="header-holder">
+           <h2> Technical Details </h2>
+         </div>
+           
+        </div>
+
+        <div class="span12">
+           Our data was split into three sections: data used to train the forecasting models, data used to train the ensembling model, and data used to test both the ensembling and the forecasting together:
+
+           <img src="test_train.png" width="100%" />
+
+           
+        </div>
+
+        <div class="span12">
+           We trained our three forecasting models using the following parameters:
+        </div>
+
+
+        <div class="span4">
+
+        <div class="model-name">
+          <b>N</b>eural <b>B</b>asis <b>E</b>xpansion <b>A</b>nalysis for <b>T</b>ime <b>S</b>eries
+        </div>
+
+        Input Series Length: 12<br/>
+        Output Series Length: 10<br/>
+        <br/>
+        Stacks: 4<br/>
+        Blocks per Stack: 16<br/>
+        Layers per Block: 4<br/>
+        Layer Width: 512<br/>
+        <br/>
+        Training Epochs: 20<br/>
+        </div>
+
+        <div class="span4">
+        
+        <div class="model-name">
+        <b>L</b>ong <b>S</b>hort <b>T</b>erm <b>M</b>emory
+        </div>
+
+        Input Series Length: 12<br/>
+        Output Series Length: 4<br/>
+        <br/>
+        Hidden Layer Size: 20<br/>
+        Learning Rate: 1e-3<br/>
+        <br/>
+        Training Epochs: 20<br/>
+
+        </div>
+
+        <div class="span4">
+
+        <div class="model-name">
+        <b>G</b>ated <b>R</b>ecurrent <b>U</b>nit
+        </div>
+
+        Input Series Length: 12<br/>
+        Output Series Length: 4<br/>
+        <br/>
+        Hidden Layer Size: 20<br/>
+        Learning Rate: 1e-3<br/>
+        <br/>
+        Training Epochs: 20<br/>
+        </div>
+
+        <div class="span12">
+
+          <div>
+            <p>
+              
+              Each of our models performed differently depending on the demographic characteristics of the census tract. The NBEATS model had higher accuracy when the eviction counts and demographic characteristics were higher whereas the LSTM and GRU models had higher accuracy when the eviction counts and demographic characteristics were lower.
+            </p>
+          </div>
+
+        <table class="results-table">  
+        <tr>
+        <td></td>
+        <td>NBEATS</td>
+        <td>LSTM</td>
+        <td>GRU</td>
+        </tr>
+        <tr> 
+        <td>Number of Census Tracts</td>
+        <td class="result-green">78</td>
+        <td class="result-yellow">31</td>
+        <td class="result-lime-1">50</td>
+        </tr>
+        <tr> 
+        <td>Avg. Total Evictions</td>
+        <td class="result-green">725.5</td>
+        <td class="result-yellow">211.3</td>
+        <td class="result-lime-1">315.8</td>
+        </tr>
+        <tr> 
+        <td>Avg. Latest Evictions</td>
+        <td class="result-green">1.6</td>
+        <td class="result-yellow">0.5</td>
+        <td class="result-yellow">0.5</td>
+        </tr>
+        <tr> 
+        <td>Avg. Total Black Population</td>
+        <td class="result-green">1,386.8</td>
+        <td class="result-yellow">606.5</td>
+        <td class="result-lime-3">724.8</td>
+        </tr>
+        <tr> 
+        <td>Avg. Gross Rent</td>
+        <td class="result-green">906.3</td>
+        <td class="result-yellow">567.8</td>
+        <td class="result-lime-2">833.3</td>
+        </tr>
+        <tr> 
+        <td>Avg. Paying 30%-50% of income on rent</td>
+        <td class="result-green">376.8</td>
+        <td class="result-yellow">218.7</td>
+        <td style="background-color: #D0DD9A;">240.9</td>
+        </tr>
+        <tr> 
+        <td>Avg. Paying > 50% of income on rent</td>
+        <td class="result-green">162.0</td>
+        <td class="result-yellow">70.2</td>
+        <td style="background-color: #D0DD9A;">108.3</td>
+        </tr>
+        <tr> 
+        <td>Avg. No Earnings</td>
+        <td class="result-green">215.8</td>
+        <td class="result-yellow">105.5</td>
+        <td style="background-color: #D0DD9A;">141.9</td>
+        </tr><tr> 
+        <td>Avg. Moved Residents</td>
+        <td class="result-green">226.0</td>
+        <td class="result-yellow">112.1</td>
+        <td style="background-color: #D0DD9A;">143.6</td>
+        </tr><tr> 
+        <td>Avg. Low Income Paying high % of income on rent</td>
+        <td class="result-green">291.5</td>
+        <td class="result-yellow">206.6</td>
+        <td style="background-color: #AFD191">255.1</td>
+        </tr>
+        </table>
+
+
+        </div>
+
+        <div class="span12">
+
+          <div>
+            <p>
+              
+              The ensemble model outperformed each of the respective forecasting models when measured by RMSE and slightly outperformed each of the forecasting models when measured by MASE.
+            </p>
+          </div>
+
+          <img src="ensembling_performance.png" width="100%"/>
+
+        
       </div>
 
       </div>
