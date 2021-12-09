@@ -426,17 +426,22 @@
 		  	A distribution of weekly eviction counts reveals that 57% or the weekly eviction counts by census tracts show zero evictions in the week, with a max weekly eviction count of 71 evictions in one census track observed. This irregular, non-smooth distribution presented challenges in forecasting. The jagged nature of eviction data becomes clear when examining the 10-year eviction trend of a single tract. Thus we apply simple exponential smoothing on the data. 
 			In comparing our actual vs. predicted evictions of non-smoothed (left) data vs. smoothed data (right) with exponential smoothing, we see a smoother trend line emerge while still capturing the general movement of the data.
 			</p>
+	  		
+	  		<img src="model-data-smoothing.png" width="100%"/>
 			
 			<p><p style="text-decoration: underline;">4) Differencing to detrending the data:</p> Additionally, we observed that our data was heavily trended and did not exhibit much stationarity. Of the 882 census tracts in our dataset, a little of a quarter pass the KPSS test for stationarity and an eighth pass the ADF test for stationarity with a p-value > 0.05. Only 11 census tracts pass both the ADF and KPSS stationarity tests, which would be a preferred assumption for time series forecasting. 
 			
 			In order to de-trend the data, we took the difference of the eviction counts day rather than the actual count of evictions themselves. Using one tract as an example, the top graph is the trend of actual eviction accounts. Strong seasonality is observed throughout the data and timeline. The trend is displayed in the second graph, the seasonality is the third graph and the fourth bottom graph is the residuals. We see minimal seasonality displayed over time while residuals are high reflecting deviation from the location, indicating a strong trend that differencing would massage for model building.</p>
 	
-			<p><p style="text-decoration: underline;">4) Demographic Covariate Selection:</p> There are about 2,000 demographic variables for each census tract through the American Community Survey. We conducted a literature review, subject matter expert interviews and exploratory linear regression data analysis to identify this set of 7 ACS demographic variables that would be high impact covariates with predictive power. Below is the set of variables identified. We selected our set of seven demographic covariates and ran a Fixed Effects panel regression with the covariates and our full time series eviction dataset. Our panel regression showed a high R2 value for the between panels measurement at 0.98 between tracts that indicated a selection of neighborhood factors distinguishing one tract from another. Additionally, the within R2 value for within panels was low at 0.45 which indicated that these demographic variables alone would not be a strong predictor of evictions and strengthened our approach to investigate the combined predictive power of demographic variables with our eviction count time series.
+			<img src="detrending.png" width="100%"/>
+	
+			<p><p style="text-decoration: underline;">4) Demographic Covariate Selection:</p> There are about 2,000 demographic variables for each census tract through the American Community Survey. We conducted a literature review, subject matter expert interviews and exploratory linear regression data analysis to identify this set of 7 ACS demographic variables that would be high impact covariates with predictive power. Below is the set of variables identified. We selected our set of seven demographic covariates and ran a Fixed Effects panel regression with the covariates and our full time series eviction dataset. Our panel regression showed a high R2 value for the between panels measurement at 0.98 between tracts that indicated a selection of neighborhood factors distinguishing one tract from another. Additionally, the within R2 value for within panels was low at 0.45 which indicated that these demographic variables alone would not be a strong predictor of evictions and strengthened our approach to investigate the combined predictive power of demographic variables with our eviction count time series. </p>
 
-
-Additionally, we established that there was not a high level of multilinearity observed in our identified set of covariates.
-
-Qualitatively, our literature review and expert conversations further substantiated the observed neighborhood factors driving evictions stemmed from income level, and racial/ethnic groups and renter population in a neighborhood. 
+			<p>Additionally, we established that there was not a high level of multilinearity observed in our identified set of covariates.</p>
+	
+			<img src="multilinearity.png" width="50%"/>
+				
+			Qualitatively, our literature review and expert conversations further substantiated the observed neighborhood factors driving evictions stemmed from income level, and racial/ethnic groups and renter population in a neighborhood. 
 </p>
 			
 		</div>
@@ -511,11 +516,15 @@ Qualitatively, our literature review and expert conversations further substantia
 
 		<div class="span12">
 			<b>Metric for Model Performance: RMSE </b><br>
-			Our primary evaluation metric is the Root Mean Square Error based on our observed data and problem statement.  Our observed data in the eviction data resembles a Poisson distribution with distinct count values with many 0 values (over 50% of our eviction count data are 0s).
+			<p>Our primary evaluation metric is the Root Mean Square Error based on our observed data and problem statement.  Our observed data in the eviction data resembles a Poisson distribution with distinct count values with many 0 values (over 50% of our eviction count data are 0s).</p>
 			
 			<p>There are a number of metrics to consider when evaluating prediction measures - Mean Squared Error (MSE), Mean Absolute Deviation (MAD) - to name a few. Of the standard performance metrics, RMSE better reflects how a forecast responds to outliers. Forecasts that optimize for MAE, MSE or MAD may pull predictions towards the mean, which in our observed eviction dataset are primarily between zero and one. </p>
 			
 			<p>We illustrate this with two example census tracts. Both trend lines in blue do not adequately respond to the observed outlier data. Rather they move with the general trend. RMSE and MASE is more sensitive to outliers and spikes and is better able to capture the irregular peaks and valleys of eviction patterns. Both were used to evaluate the performance of our forecasting models as well as the models selected in the ensemble approach.</p>
+			
+			 <img src="model-metric-poisson.png" width="100%"/>
+							
+			
 		</div>
 
 		<div class="span12">
