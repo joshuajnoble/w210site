@@ -436,10 +436,10 @@
 			<img src="detrending.png" width="100%"/>
 	
 			<p><p style="text-decoration: underline;">4) Demographic Covariate Selection:</p> There are about 2,000 demographic variables for each census tract through the American Community Survey. We conducted a literature review, subject matter expert interviews and exploratory linear regression data analysis to identify this set of 7 ACS demographic variables that would be high impact covariates with predictive power. Below is the set of variables identified. We selected our set of seven demographic covariates and ran a Fixed Effects panel regression with the covariates and our full time series eviction dataset. Our panel regression showed a high R2 value for the between panels measurement at 0.98 between tracts that indicated a selection of neighborhood factors distinguishing one tract from another. Additionally, the within R2 value for within panels was low at 0.45 which indicated that these demographic variables alone would not be a strong predictor of evictions and strengthened our approach to investigate the combined predictive power of demographic variables with our eviction count time series. </p>
+			
+			<img src="multilinearity.png" width="30%"/>
 
 			<p>Additionally, we established that there was not a high level of multilinearity observed in our identified set of covariates.</p>
-	
-			<img src="multilinearity.png" width="50%"/>
 				
 			Qualitatively, our literature review and expert conversations further substantiated the observed neighborhood factors driving evictions stemmed from income level, and racial/ethnic groups and renter population in a neighborhood. 
 </p>
@@ -607,14 +607,13 @@
         </div>
 
         <div class="span12">
-<!--          <div style="height: 20px;"></div>-->                
-              The ensemble model outperformed each of the respective forecasting models when measured by RMSE and slightly outperformed each of the forecasting models when measured by MASE.
-            </p>
-       
-          <img src="ensembling_performance.png" width="100%"/>
+			<b>Performance of Ensemble Models</b><br>
 			
+			<p>The ensemble model outperformed each of the respective forecasting models when measured by RMSE and slightly outperformed each of the forecasting models when measured by MASE.  
+				
+				<img src="ensembling_performance.png" width="100%"/>
 			
-			<p>Two real world census tract showcase how the ensembling model works end-to-end.</p> 
+			Two real world census tract showcase how the ensembling model works end-to-end.</p> 
 				
 			<p>The first example shows a census tract that shows a relatively large number of historical evictions, black population in census tract and high percentage of low income variables. The ensemble model selects NBEATS as the forecasting model and predicts a 10-week prediction that has a RSME of 0.293. </p>
 			
