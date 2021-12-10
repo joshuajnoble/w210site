@@ -405,7 +405,7 @@
         </div>
 
         <div class="span6">
-          <ul><li>Jessica Li</li> <li>Mike Rivera</li> <li>Elizabeth Resor</li> <li>Aishah Newsom</li> <li>Zoe Kahn</li> <li>Saira Rahman</li></ul>
+          <ul><li>Mike Rivera</li> <li>Elizabeth Resor</li> <li>Aishah Newsom</li> <li>Zoe Kahn</li> <li>Saira Rahman</li></ul>
         </div>
       </div>
 
@@ -417,9 +417,41 @@
          </div>
            
         </div>
+		  
+		<div class="span12">
+			<b>Data Selection & Engineering</b>
+			<p><p style="text-decoration: underline;">1) Selecting the timeline:</p> We focus our model building, testing and reporting with a timeframe from 2010 to 2019. As of Fall 2021 neither the ACS 1-year nor 5-year estimates were available for 2020 or 2021. Furthermore, while we have eviction data to present day Fall 2021, the COVID eviction moratoriums federally ordered for the majority of 2020 and 2021 represent a forecasting of ‘special events’ of unexpected drops/jumps or zero frequencies. We believe our findings on the technical approach to eviction forecasting can be applied post-COVID with additional data and retrospective reflection. </p>
+			
+			<p><p style="text-decoration: underline;">2) Smoothing the data:</p> 
+		  	A distribution of weekly eviction counts reveals that 57% or the weekly eviction counts by census tracts show zero evictions in the week, with a max weekly eviction count of 71 evictions in one census track observed. This irregular, non-smooth distribution presented challenges in forecasting. The jagged nature of eviction data becomes clear when examining the 10-year eviction trend of a single tract. Thus we apply simple exponential smoothing on the data. 
+			In comparing our actual vs. predicted evictions of non-smoothed (left) data vs. smoothed data (right) with exponential smoothing, we see a smoother trend line emerge while still capturing the general movement of the data.
+			</p>
+	  		
+	  		<img src="model-data-smoothing.png" width="100%"/>
+			
+			<p><p style="text-decoration: underline;">4) Differencing to detrending the data:</p> Additionally, we observed that our data was heavily trended and did not exhibit much stationarity. Of the 882 census tracts in our dataset, a little of a quarter pass the KPSS test for stationarity and an eighth pass the ADF test for stationarity with a p-value > 0.05. Only 11 census tracts pass both the ADF and KPSS stationarity tests, which would be a preferred assumption for time series forecasting. 
+			
+			In order to de-trend the data, we took the difference of the eviction counts day rather than the actual count of evictions themselves. Using one tract as an example, the top graph is the trend of actual eviction accounts. Strong seasonality is observed throughout the data and timeline. The trend is displayed in the second graph, the seasonality is the third graph and the fourth bottom graph is the residuals. We see minimal seasonality displayed over time while residuals are high reflecting deviation from the location, indicating a strong trend that differencing would massage for model building.</p>
+	
+			<img src="detrending.png" width="100%"/>
+	
+			<p><p style="text-decoration: underline;">4) Demographic Covariate Selection:</p> There are about 2,000 demographic variables for each census tract through the American Community Survey. We conducted a literature review, subject matter expert interviews and exploratory linear regression data analysis to identify this set of 7 ACS demographic variables that would be high impact covariates with predictive power.The results of the Fixed Effects panel regression described above was run against our full dataset. The combined R-squared values of R-squared (between) at 0.95 and within R-squared (within) at 0.46 described above indicated that these demographic variables alone would not be a strong predictor of evictions but strengthened our approach to investigate the combined predictive power of demographic variables with our eviction count time series. </p>
+			
+			<img src="multilinearity.png" width="30%"/>
 
+			<p>Additionally, we established that there was not a high level of multilinearity observed in our identified set of covariates.</p>
+				
+			Qualitatively, our literature review and expert conversations further substantiated the observed neighborhood factors driving evictions stemmed from income level, and racial/ethnic groups and renter population in a neighborhood. 
+</p>
+			
+		</div>
+
+	
         <div class="span12">
-           Our data was split into three sections: data used to train the forecasting models, data used to train the ensembling model, and data used to test both the ensembling and the forecasting together:
+			<b>Dataset for Model building</b><br>
+			Ultimately, our dataset consisted smoothed differenced weekly eviction counts from 2010 to 2019, across the 882 census tracts of the Dallas and Houston cities accompanied by seven annual demographic variables of those tracts.<br>
+			
+			Our data was split into three sections: data used to train the forecasting models, data used to train the ensembling model, and data used to test both the ensembling and the forecasting together:<br>
 
            <img src="test_train.png" width="100%" />
 
@@ -478,14 +510,30 @@
         <br/>
         Training Epochs: 20<br/>
         </div>
+		
+		<br>
+		<br>
 
-        <div class="span12">
+		<div class="span12">
+			<b>Metric for Model Performance: RMSE </b><br>
+			<p>Our primary evaluation metric is the Root Mean Square Error based on our observed data and problem statement.  Our observed data in the eviction data resembles a Poisson distribution with distinct count values with many 0 values (over 50% of our eviction count data are 0s).</p>
+			
+			<p>There are a number of metrics to consider when evaluating prediction measures - Mean Squared Error (MSE), Mean Absolute Deviation (MAD) - to name a few. Of the standard performance metrics, RMSE better reflects how a forecast responds to outliers. Forecasts that optimize for MAE, MSE or MAD may pull predictions towards the mean, which in our observed eviction dataset are primarily between zero and one. </p>
+			
+			<p>We illustrate this with two example census tracts. Both trend lines in blue do not adequately respond to the observed outlier data. Rather they move with the general trend. RMSE and MASE is more sensitive to outliers and spikes and is better able to capture the irregular peaks and valleys of eviction patterns. Both were used to evaluate the performance of our forecasting models as well as the models selected in the ensemble approach.</p>
+			
+			 <img src="model-metric-poisson.png" width="100%"/>
+							
+			
+		</div>
 
-          <div>
-            <p>
-              
-              Each of our models performed differently depending on the demographic characteristics of the census tract. The NBEATS model had higher accuracy when the eviction counts and demographic characteristics were higher whereas the LSTM and GRU models had higher accuracy when the eviction counts and demographic characteristics were lower.
-            </p>
+		<div class="span12">
+			<b>Performance of Forecasting Models</b><br>
+			
+			
+			<p>We see that there is not only one definitive model that performs better than the other two. While NBEATS has the most number of test tracts with the lowest RMSE, it only covers half of the test tracts. The average RMSE of these predictions, regardless of the best performing model was around 0.13, which indicated an encouraging direction of accurate forecasting. </p>
+
+            <p>We examine model performance against different census tract to understand differentiating data factors either historical evictions or demographic covariates used as part of model training. In the table  to the right, the highest value of the three is green while the lowest value of the three models is yellow. </p>
           </div>
 
         <table class="results-table">  
@@ -554,22 +602,28 @@
         <td style="background-color: #AFD191">255.1</td>
         </tr>
         </table>
-
-
+		
+		<p>Each of our models performed differently depending on the demographic characteristics of the census tract. The NBEATS model had higher accuracy when the eviction counts and demographic characteristics were higher whereas the LSTM and GRU models had higher accuracy when the eviction counts and demographic characteristics were lower.GRU was selected when input values observed somewhere in between NBEATS and LSTM.</p>
         </div>
 
         <div class="span12">
-          <div style="height: 20px;"></div>
-          <div>
-            <p>
-              
-              The ensemble model outperformed each of the respective forecasting models when measured by RMSE and slightly outperformed each of the forecasting models when measured by MASE.
-            </p>
-          </div>
+			<b>Performance of Ensemble Models</b><br>
+			
+			<p>The ensemble model outperformed each of the respective forecasting models when measured by RMSE and slightly outperformed each of the forecasting models when measured by MASE.  
+				
+				<img src="ensembling_performance.png" width="100%"/>
+			
+			Two real world census tract showcase how the ensembling model works end-to-end.</p> 
+				
+			<p>The first example shows a census tract that shows a relatively large number of historical evictions, black population in census tract and high percentage of low income variables. The ensemble model selects NBEATS as the forecasting model and predicts a 10-week prediction that has a RSME of 0.293. </p>
+			
+			<img src="forecast-example-nbeats.png" width="100%"/>
+			
+			<p>While the second census tract example shows LSTM as the selected ensemble model due to its relatively lower average eviction and covariate input values. </p>
+			
+			<img src="forecast-example-lstm.png" width="100%"/>
+		</div>
 
-          <img src="ensembling_performance.png" width="100%"/>
-
-        
       </div>
 
       </div>
