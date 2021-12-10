@@ -521,9 +521,9 @@
 			<p>There are a number of metrics to consider when evaluating prediction measures - Mean Squared Error (MSE), Mean Absolute Deviation (MAD) - to name a few. Of the standard performance metrics, RMSE better reflects how a forecast responds to outliers. Forecasts that optimize for MAE, MSE or MAD may pull predictions towards the mean, which in our observed eviction dataset are primarily between zero and one. </p>
 			
 			<p>We illustrate this with two example census tracts. Both trend lines in blue do not adequately respond to the observed outlier data. Rather they move with the general trend. RMSE and MASE is more sensitive to outliers and spikes and is better able to capture the irregular peaks and valleys of eviction patterns. Both were used to evaluate the performance of our forecasting models as well as the models selected in the ensemble approach.</p>
-			
-			 <img src="model-metric-poisson.png" width="100%"/>
-							
+			<div>
+			 <img src="model-metric-poisson.png" style="display: block; margin-left: auto; margin-right: auto;"/>
+			</div>
 			
 		</div>
 
@@ -534,7 +534,6 @@
 			<p>We see that there is not only one definitive model that performs better than the other two. While NBEATS has the most number of test tracts with the lowest RMSE, it only covers half of the test tracts. The average RMSE of these predictions, regardless of the best performing model was around 0.13, which indicated an encouraging direction of accurate forecasting. </p>
 
             <p>We examine model performance against different census tract to understand differentiating data factors either historical evictions or demographic covariates used as part of model training. In the table  to the right, the highest value of the three is green while the lowest value of the three models is yellow. </p>
-          </div>
 
         <table class="results-table">  
         <tr>
@@ -607,21 +606,21 @@
         </div>
 
         <div class="span12">
-			<b>Performance of Ensemble Models</b><br>
+			<h3>Performance of Ensemble Models</h3><br>
 			
 			<p>The ensemble model outperformed each of the respective forecasting models when measured by RMSE and slightly outperformed each of the forecasting models when measured by MASE.  
 				
-				<img src="ensembling_performance.png" width="100%"/>
+				<img src="ensembling_performance.png" style="width: 100%; display: block; margin-left: auto; margin-right: auto;"/>
 			
 			Two real world census tract showcase how the ensembling model works end-to-end.</p> 
 				
 			<p>The first example shows a census tract that shows a relatively large number of historical evictions, black population in census tract and high percentage of low income variables. The ensemble model selects NBEATS as the forecasting model and predicts a 10-week prediction that has a RSME of 0.293. </p>
 			
-			<img src="forecast-example-nbeats.png" width="100%"/>
+			<img src="forecast-example-nbeats.png" style="display: block; margin-left: auto; margin-right: auto;"/>
 			
 			<p>While the second census tract example shows LSTM as the selected ensemble model due to its relatively lower average eviction and covariate input values. </p>
 			
-			<img src="forecast-example-lstm.png" width="100%"/>
+			<img src="forecast-example-lstm.png" style="display: block; margin-left: auto; margin-right: auto;"/>
 		</div>
 
       </div>
